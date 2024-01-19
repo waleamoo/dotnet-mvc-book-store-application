@@ -27,7 +27,10 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="nav-item">
-                            <a href="/book/getallbooks" class="nav-link text-dark">All Books</a>
+                            <a asp-controller="Book" asp-action="GetAllBooks" class="nav-link text-dark">All Books</a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="Book" asp-action="AddNewBook" class="nav-link text-dark">Add New Book</a>
                         </li>
                     </ul>
 

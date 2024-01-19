@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using TechQwerty.BookStore.Data;
+using TechQwerty.BookStore.Repository;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +11,13 @@ builder.Services.AddControllersWithViews();
 // 1. Add runtime compilation of razor file
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 #endif
+// 2. Add Data Conrext 
+builder.Services.AddDbContext<BookStoreContext>(
+    options => options.UseSqlServer("Server=(LocalDb)\\MSSQLLocalDB;Database=BookStore;Trusted_Connection=True;MultipleActiveResultSets=True;TrustServerCertificate=True")
+    );
+// 3. Add DI 
+builder.Services.AddScoped<BookRepository, BookRepository>();
+builder.Services.AddScoped<LanguageRepository, LanguageRepository>();
 
 var app = builder.Build();
 
