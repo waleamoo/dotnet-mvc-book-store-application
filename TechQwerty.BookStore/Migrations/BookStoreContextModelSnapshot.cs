@@ -22,7 +22,7 @@ namespace TechQwerty.BookStore.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TechQwerty.BookStore.Models.Book", b =>
+            modelBuilder.Entity("TechQwerty.BookStore.Data.Book", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,6 +35,10 @@ namespace TechQwerty.BookStore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CoverImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -65,7 +69,33 @@ namespace TechQwerty.BookStore.Migrations
                     b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("TechQwerty.BookStore.Models.Language", b =>
+            modelBuilder.Entity("TechQwerty.BookStore.Data.BookGallery", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("URL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("BookGallery");
+                });
+
+            modelBuilder.Entity("TechQwerty.BookStore.Data.Language", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -86,9 +116,9 @@ namespace TechQwerty.BookStore.Migrations
                     b.ToTable("Languages");
                 });
 
-            modelBuilder.Entity("TechQwerty.BookStore.Models.Book", b =>
+            modelBuilder.Entity("TechQwerty.BookStore.Data.Book", b =>
                 {
-                    b.HasOne("TechQwerty.BookStore.Models.Language", "Language")
+                    b.HasOne("TechQwerty.BookStore.Data.Language", "Language")
                         .WithMany("Books")
                         .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -97,7 +127,23 @@ namespace TechQwerty.BookStore.Migrations
                     b.Navigation("Language");
                 });
 
-            modelBuilder.Entity("TechQwerty.BookStore.Models.Language", b =>
+            modelBuilder.Entity("TechQwerty.BookStore.Data.BookGallery", b =>
+                {
+                    b.HasOne("TechQwerty.BookStore.Data.Book", "Book")
+                        .WithMany("BookGallery")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("TechQwerty.BookStore.Data.Book", b =>
+                {
+                    b.Navigation("BookGallery");
+                });
+
+            modelBuilder.Entity("TechQwerty.BookStore.Data.Language", b =>
                 {
                     b.Navigation("Books");
                 });

@@ -27,5 +27,16 @@ namespace TechQwerty.BookStore.Models
         [Required(ErrorMessage = "Please enter the number of pages of the book")]
         [Display(Name = "Total pages of book")]
         public int? TotalPages { get; set; }
+
+        [Display(Name = "Choose the cover photo of your book")]
+        [Required]
+        public IFormFile CoverPhoto { get; set; }
+        public string CoverImageUrl { get; set; }
+
+        [Display(Name = "Choose the gallery images of your book")]
+        [Required]
+        public IFormFileCollection GalleryFiles { get; set; }
+
+        public List<GalleryImageModel> Gallery { get; set; }
     }
 }

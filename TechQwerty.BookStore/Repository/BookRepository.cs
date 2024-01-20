@@ -24,8 +24,21 @@ namespace TechQwerty.BookStore.Repository
                 Title = model.Title,
                 LanguageId = model.LanguageId,
                 TotalPages = model.TotalPages.HasValue ? model.TotalPages.Value : 0,
-                UpdatedOn = DateTime.UtcNow
+                UpdatedOn = DateTime.UtcNow,
+                CoverImageUrl = model.CoverImageUrl
             };
+
+            newBook.BookGallery = new List<BookGallery>();
+            
+            foreach (var file in model.Gallery)
+            {
+                newBook.BookGallery.Add(new BookGallery()
+                {
+                    Name = file.Name,
+                    URL = file.URL
+                }); 
+            }
+
             await _context.Books.AddAsync(newBook);
             await _context.SaveChangesAsync();
             return newBook.Id;
@@ -37,18 +50,19 @@ namespace TechQwerty.BookStore.Repository
             List<Book> allbooks = await _context.Books.Include(x => x.Language).ToListAsync();
             if (allbooks?.Any() == true)
             {
-                foreach (var item in allbooks)
+                foreach (var book in allbooks)
                 {
                     books.Add(new BookModel()
                     {
-                        Id = item.Id,
-                        Author = item.Author,
-                        Category = item.Category,
-                        Description = item.Description,
-                        LanguageId = item.LanguageId,
-                        Language = item.Language.Name ?? "",
-                        Title = item.Title,
-                        TotalPages = item.TotalPages,
+                        Id = book.Id,
+                        Author = book.Author,
+                        Category = book.Category,
+                        Description = book.Description,
+                        LanguageId = book.LanguageId,
+                        Language = book.Language.Name ?? "",
+                        Title = book.Title,
+                        TotalPages = book.TotalPages,
+                        CoverImageUrl = book.CoverImageUrl
                     });
                 }
             }
@@ -67,7 +81,14 @@ namespace TechQwerty.BookStore.Repository
                         LanguageId = book.LanguageId,
                         Language = book.Language.Name,
                         Title = book.Title,
-                        TotalPages = book.TotalPages
+                        TotalPages = book.TotalPages,
+                        CoverImageUrl = book.CoverImageUrl,
+                        Gallery = book.BookGallery.Select(g => new GalleryImageModel()
+                        {
+                            Id = g.Id, 
+                            Name = g.Name,
+                            URL = g.URL
+                        }).ToList()
                     }).FirstOrDefaultAsync();
                 
         }

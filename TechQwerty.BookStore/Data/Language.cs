@@ -1,4 +1,4 @@
-﻿namespace TechQwerty.BookStore.Models
+﻿namespace TechQwerty.BookStore.Data
 {
     public class Language
     {
