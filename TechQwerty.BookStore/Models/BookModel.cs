@@ -38,5 +38,10 @@ namespace TechQwerty.BookStore.Models
         public IFormFileCollection GalleryFiles { get; set; }
 
         public List<GalleryImageModel> Gallery { get; set; }
+
+        [Display(Name = "Upload your book in PDF format")]
+        [Required]
+        public IFormFile BookPdf { get; set; }
+        public string BookPdfUrl { get; set; }
     }
 }

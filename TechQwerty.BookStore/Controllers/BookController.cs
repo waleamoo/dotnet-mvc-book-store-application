@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechQwerty.BookStore.Models;
 using TechQwerty.BookStore.Repository;
@@ -7,11 +8,11 @@ namespace TechQwerty.BookStore.Controllers
 {
     public class BookController : Controller
     {
-        private readonly BookRepository _bookRepository = null;
-        private readonly LanguageRepository _languageRepository;
+        private readonly IBookRepository _bookRepository = null;
+        private readonly ILanguageRepository _languageRepository = null;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public BookController(BookRepository bookRepository, LanguageRepository languageRepository, IWebHostEnvironment webHostEnvironment)
+        public BookController(IBookRepository bookRepository, ILanguageRepository languageRepository, IWebHostEnvironment webHostEnvironment)
         {
             _bookRepository = bookRepository;
             _languageRepository = languageRepository;
@@ -23,27 +24,31 @@ namespace TechQwerty.BookStore.Controllers
             return await _bookRepository.GetAllBooks();
         }
 
+        [Route("all-books")]
         public async Task<ViewResult> GetAllBooks()
         {
             var data = await _bookRepository.GetAllBooks();
             return View(data);
         }
 
+        [Route("book-details/{id:int:min(1)}", Name = "bookDetailsRoute")]
         public async Task<ViewResult> GetBook(int id)
         {
             var book = await _bookRepository.GetBookById(id);
             return View(book);
         }
-        
+
+        [Authorize]
         public async Task<ViewResult> AddNewBook(bool isSuccess = false, int bookId = 0)
         {
             var model = new BookModel();
-            ViewBag.Languages = new SelectList(await _languageRepository.GetLanguages(), "Id", "Name");
+            //ViewBag.Languages = new SelectList(await _languageRepository.GetLanguages(), "Id", "Name");
             ViewBag.IsSuccess = isSuccess;
             ViewBag.BookId = bookId;
             return View(model);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddNewBook(BookModel bookModel)
         {
@@ -74,6 +79,13 @@ namespace TechQwerty.BookStore.Controllers
                     }
                 }
 
+                // upload PDF 
+                if (bookModel.BookPdf != null)
+                {
+                    string folder = "books/pdf/";
+                    bookModel.BookPdfUrl = await UploadImage(folder, bookModel.BookPdf);
+                }
+
                 int id = await _bookRepository.AddNewBook(bookModel);
                 if (id > 0)
                 {
@@ -81,7 +93,7 @@ namespace TechQwerty.BookStore.Controllers
                 }
             }
 
-            ViewBag.Languages = new SelectList(await _languageRepository.GetLanguages(), "Id", "Name");
+            //ViewBag.Languages = new SelectList(await _languageRepository.GetLanguages(), "Id", "Name");
 
             //ModelState.AddModelError("", "Book entry error");
 

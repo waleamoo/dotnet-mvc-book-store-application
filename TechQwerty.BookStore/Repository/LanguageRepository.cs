@@ -4,7 +4,7 @@ using TechQwerty.BookStore.Models;
 
 namespace TechQwerty.BookStore.Repository
 {
-    public class LanguageRepository
+    public class LanguageRepository : ILanguageRepository
     {
         private readonly BookStoreContext _context;
 

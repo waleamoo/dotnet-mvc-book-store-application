@@ -5,7 +5,7 @@ using TechQwerty.BookStore.Models;
 
 namespace TechQwerty.BookStore.Repository
 {
-    public class BookRepository
+    public class BookRepository : IBookRepository
     {
         private readonly BookStoreContext _context;
 
@@ -25,18 +25,19 @@ namespace TechQwerty.BookStore.Repository
                 LanguageId = model.LanguageId,
                 TotalPages = model.TotalPages.HasValue ? model.TotalPages.Value : 0,
                 UpdatedOn = DateTime.UtcNow,
-                CoverImageUrl = model.CoverImageUrl
+                CoverImageUrl = model.CoverImageUrl,
+                BookPdfUrl = model.BookPdfUrl
             };
 
             newBook.BookGallery = new List<BookGallery>();
-            
+
             foreach (var file in model.Gallery)
             {
                 newBook.BookGallery.Add(new BookGallery()
                 {
                     Name = file.Name,
                     URL = file.URL
-                }); 
+                });
             }
 
             await _context.Books.AddAsync(newBook);
@@ -69,6 +70,23 @@ namespace TechQwerty.BookStore.Repository
             return books;
         }
 
+        public async Task<List<BookModel>> GetTopBooksAsync()
+        {
+            return await _context.Books.
+                Select(book => new BookModel()
+                {
+                    Id = book.Id,
+                    Author = book.Author,
+                    Category = book.Category,
+                    Description = book.Description,
+                    LanguageId = book.LanguageId,
+                    Language = book.Language.Name ?? "",
+                    Title = book.Title,
+                    TotalPages = book.TotalPages,
+                    CoverImageUrl = book.CoverImageUrl
+                }).Take(5).ToListAsync();
+        }
+
         public async Task<BookModel> GetBookById(int id)
         {
             return await _context.Books.Where(x => x.Id == id)
@@ -85,12 +103,13 @@ namespace TechQwerty.BookStore.Repository
                         CoverImageUrl = book.CoverImageUrl,
                         Gallery = book.BookGallery.Select(g => new GalleryImageModel()
                         {
-                            Id = g.Id, 
+                            Id = g.Id,
                             Name = g.Name,
                             URL = g.URL
-                        }).ToList()
+                        }).ToList(),
+                        BookPdfUrl = book.BookPdfUrl
                     }).FirstOrDefaultAsync();
-                
+
         }
 
         public List<BookModel> SearchBook(string title, string authorName)

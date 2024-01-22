@@ -1,4 +1,5 @@
-﻿@model BookModel
+﻿@inject TechQwerty.BookStore.Repository.ILanguageRepository _languageRepo
+@model BookModel
 
 @{
     ViewData["Title"] = "Add New Book";
@@ -21,8 +22,8 @@
 
         <div class="form-group mb-2">
             <label asp-for="LanguageId"></label>
-            <select asp-for="LanguageId" class="form-control" asp-items="ViewBag.Languages">
-                <option value="">Choose a language</option>
+            <select asp-for="LanguageId" class="form-control" asp-items="(await _languageRepo.GetLanguages()).Select(x => new SelectListItem() { Text = x.Name, Value = x.Id.ToString()})">
+                <option value="">Please choose your language</option>
             </select>
             <span asp-validation-for="LanguageId" class="text-danger"></span>
         </div>
@@ -65,6 +66,14 @@
                 <input asp-for="GalleryFiles" class="custom-file-input" id="customFile" />
             </div>
             <span asp-validation-for="GalleryFiles" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-2">
+            <label asp-for="BookPdf"></label>
+            <div class="custom-file">
+                <input asp-for="BookPdf" class="custom-file-input" id="customFile" accept=".pdf" />
+            </div>
+            <span asp-validation-for="BookPdf" class="text-danger"></span>
         </div>
 
         <div class="form-group mb-2">

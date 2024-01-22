@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using TechQwerty.BookStore.Models;
 
 namespace TechQwerty.BookStore.Data
 {
-    public class BookStoreContext : DbContext
+    public class BookStoreContext : IdentityDbContext<ApplicationUser> // DbContext
     {
         public BookStoreContext(DbContextOptions<BookStoreContext> options): base (options)
         {
