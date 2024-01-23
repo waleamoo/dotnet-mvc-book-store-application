@@ -21,15 +21,15 @@ namespace TechQwerty.BookStore.Controllers
         public async Task<ViewResult> Index()
         {
             // send test email
-            UserEmailOptions options = new UserEmailOptions
-            {
-                ToEmails = new List<string>() { "test@test.com" },
-                PlaceHolders = new List<KeyValuePair<string, string>>()
-                {
-                    new KeyValuePair<string, string>("{{ UserName }}", "Olawale")
-                }
-            };
-            await _emailService.SendTestEmail(options);
+            //UserEmailOptions options = new UserEmailOptions
+            //{
+            //    ToEmails = new List<string>() { "test@test.com" },
+            //    PlaceHolders = new List<KeyValuePair<string, string>>()
+            //    {
+            //        new KeyValuePair<string, string>("{{ UserName }}", "Olawale")
+            //    }
+            //};
+            //await _emailService.SendTestEmail(options);
 
             var userId = _userService.GetUserId();
             return View();

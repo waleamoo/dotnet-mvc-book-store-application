@@ -23,8 +23,28 @@ namespace TechQwerty.BookStore.Service
             userEmailOptions.Body = UpdatePlaceHolders(GetEmailBody("TestEmail"), userEmailOptions.PlaceHolders);
             await SendEmail(userEmailOptions);
         }
-
-
+        
+        // 2. Email to be sent for registration confirmation 
+        public async Task SendEmailForConfirmation(UserEmailOptions userEmailOptions)
+        {
+            userEmailOptions.Subject = UpdatePlaceHolders("Hello {{ UserName }}, Confirm your email", userEmailOptions.PlaceHolders);
+            userEmailOptions.Body = UpdatePlaceHolders(GetEmailBody("EmailConfirm"), userEmailOptions.PlaceHolders);
+            await SendEmail(userEmailOptions);
+        }
+        
+        // 3. Email to be sent for forgot password 
+        public async Task SendEmailForForgotPassword(UserEmailOptions userEmailOptions)
+        {
+            userEmailOptions.Subject = UpdatePlaceHolders("Hello {{ UserName }}, reset your password", userEmailOptions.PlaceHolders);
+            userEmailOptions.Body = UpdatePlaceHolders(GetEmailBody("ForgotPassword"), userEmailOptions.PlaceHolders);
+            await SendEmail(userEmailOptions);
+        }
+        /// <summary>
+        /// // contains the mailing server configurations 
+        /// </summary>
+        /// <param name="userEmailOptions"></param>
+        /// <returns></returns>
+        // Config: Settin up mailing server credentials
         private async Task SendEmail(UserEmailOptions userEmailOptions)
         {
             System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage
@@ -56,14 +76,14 @@ namespace TechQwerty.BookStore.Service
             smtpClient.Dispose();
         }
 
-        // get email template from /EmailTemplate
+        // Config: get email template from /EmailTemplate
         private string GetEmailBody(string templateName)
         {
             var body = File.ReadAllText(string.Format(templatePath, templateName));
             return body;
         }
 
-        // update email placeholders 
+        // Config: update email placeholders 
         private string UpdatePlaceHolders(string text, List<KeyValuePair<string, string>> keyValuePairs)
         {
             if (!string.IsNullOrEmpty(text) && keyValuePairs != null)
